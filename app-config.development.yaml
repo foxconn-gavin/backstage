@@ -38,7 +38,7 @@ integrations:
       token: glpat--6AsvAY4WbDmMUxBsR9X
   github:
     - host: github.com
-      token: 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
+      token: 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
   awsS3:
     - endpoint: http://minio.kratix-platform-system.svc.cluster.local
       s3ForcePathStyle: true
@@ -70,6 +70,7 @@ catalog:
     awsS3:
       kratix-bucket:
         bucketName: kratix
+        prefix: backstage/
         schedule:
           frequency: { minutes: 1 }
           timeout: { seconds: 20 }
