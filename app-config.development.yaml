@@ -1,0 +1,80 @@
+app:
+  # Should be the same as backend.baseUrl when using the `app-backend` plugin.
+  baseUrl: http://47.115.36.161
+
+backend:
+  # Note that the baseUrl should be the URL that the browser and other clients
+  # should use when communicating with the backend, i.e. it needs to be
+  # reachable not just from within the backend host, but from all of your
+  # callers. When its value is "http://localhost:7007", it's strictly private
+  # and can't be reached by others.
+  baseUrl: http://47.115.36.161
+  # The listener can also be expressed as a single <host>:<port> string. In this case we bind to
+  # all interfaces, the most permissive setting. The right value depends on your specific deployment.
+  listen: ':7007'
+  reading:
+    allow:
+      - host: gitlab.com
+      - host: github.com
+      - host: minio.kratix-platform-system.svc.cluster.local
+
+  # config options: https://node-postgres.com/api/client
+  # database:
+  #   client: pg
+  #   connection:
+  #     host: ${POSTGRES_HOST}
+  #     port: ${POSTGRES_PORT}
+  #     user: ${POSTGRES_USER}
+  #     password: ${POSTGRES_PASSWORD}
+      # https://node-postgres.com/features/ssl
+      # you can set the sslmode configuration option via the `PGSSLMODE` environment variable
+      # see https://www.postgresql.org/docs/current/libpq-ssl.html Table 33.1. SSL Mode Descriptions (e.g. require)
+      # ssl:
+      #   ca: # if you have a CA file and want to verify it you can uncomment this section
+      #     $file: <file-path>/ca/server.crt
+integrations:
+  gitlab:
+    - host: gitlab.com
+      token: glpat--6AsvAY4WbDmMUxBsR9X
+  github:
+    - host: github.com
+      token: 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
+  awsS3:
+    - endpoint: http://minio.kratix-platform-system.svc.cluster.local
+      s3ForcePathStyle: true
+      accessKeyId: minioadmin
+      secretAccessKey: minioadmin
+
+auth:
+  providers:
+    guest: {}
+
+catalog:
+  # Overrides the default list locations from app-config.yaml as these contain example data.
+  # See https://backstage.io/docs/features/software-catalog/#adding-components-to-the-catalog for more details
+  # on how to get entities into the catalog.
+  providers:
+    github:
+      # the provider ID can be any camelCase string
+      providerId:
+        organization: 'tbkc-foxconn' # string
+        catalogPath: '/catalog-info.yaml' # string
+        filters:
+          branch: 'main' # string
+          repository: '.*' # Regex
+        schedule: # same options as in TaskScheduleDefinition
+          # supports cron, ISO duration, "human duration" as used in code
+          frequency: { minutes: 30 }
+          # supports ISO duration, "human duration" as used in code
+          timeout: { minutes: 3 }
+    awsS3:
+      kratix-bucket:
+        bucketName: kratix
+        schedule:
+          frequency: { minutes: 1 }
+          timeout: { seconds: 20 }
+  locations:
+    - type: url
+      target: https://github.com/foxconn-gavin/idp-base/blob/main/org.yaml
+      rules:
+        - allow: [User, Group]
