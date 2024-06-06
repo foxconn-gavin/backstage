@@ -11,3 +11,34 @@ spec:
   type: website
   owner: john@example.com
   lifecycle: experimental
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  title: 系統管理員
+  name: admin
+  description: 平台管理單位
+spec:
+  type: team
+  admin:
+    - user:default/foxconn-gavin
+  children: []
+  members: 
+    - user:default/foxconn-gavin
+  profile: 
+    displayName: 系統管理員
+    email: gavin.wq.wu@foxconn.com
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  title: Gavin
+  name: foxconn-gavin
+  description: 開發人員
+spec:
+  memberOf: []
+  profile: 
+    displayName: 吳文強
+    email: gavin.wq.wu@foxconn.com
